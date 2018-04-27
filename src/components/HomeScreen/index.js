@@ -6,8 +6,10 @@ import {
   StyleSheet,
   Button,
   Image,
-  FlatList
+  FlatList,
 } from 'react-native';
+import { connect } from 'react-redux';
+import { updatePermission } from '../../store';
 import { Camera, Permissions, ImageManipulator } from 'expo';
 const Clarifai = require('clarifai');
 let clarifai;
@@ -30,8 +32,7 @@ const styles = StyleSheet.create({
   },
 });
 
-
-export default class HomeScreen extends React.Component {
+export class HomeScreen extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -45,7 +46,9 @@ export default class HomeScreen extends React.Component {
   async componentDidMount() {
     console.log('inside CDM Lifecycle');
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({ hasCameraPermission: status === 'granted' });
+    const { updateCameraPermission } = this.props;
+     updateCameraPermission(status === 'granted');
+    // this.setState({ hasCameraPermission: status === 'granted' });
     clarifai = new Clarifai.App({
       apiKey: 'd33b727722384c04adfa7bdf5589e5cf',
     });
@@ -75,8 +78,8 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const { uri } = this.state;
-    // console.log('Camera dir',Camera)
-    const { hasCameraPermission } = this.state;
+    console.log('PROPS IN HOME SCREEN', this.props)
+    const { hasCameraPermission } = this.props;
     if (hasCameraPermission === null) {
       return <View />;
     } else if (hasCameraPermission === false) {
@@ -153,3 +156,10 @@ export default class HomeScreen extends React.Component {
   }
 }
 
+const mapState = ({ hasCameraPermission }) => ({ hasCameraPermission });
+const mapDispatch = dispatch => ({
+  updateCameraPermission(permission) {
+    return dispatch(updatePermission(permission));
+  },
+});
+export default connect(mapState, mapDispatch)(HomeScreen);

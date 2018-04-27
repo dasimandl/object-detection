@@ -1,27 +1,25 @@
 import React, { Component } from 'react';
-import { StackNavigator } from 'react-navigation';
-import HomeScreen from './screens/HomeScreen';
-import PredictScreen from './screens/PredictScreen';
+import { StackNavigator, addNavigationHelpers } from 'react-navigation';
 
-const RootStack = StackNavigator(
-  {
-    Home: {
-      screen: HomeScreen,
-    },
-    Prediction: {
-      screen: PredictScreen,
-    },
-  },
-  {
-    initialRouteName: 'Home',
-  }
-);
+import { Provider } from 'react-redux';
+import store from './src/store';
+import { AppRegistry } from 'react-native';
+import AppWithNavigationState from './src/navigators/AppNavigator';
+import Expo from 'expo';
 
-export default class App extends Component {
-  componentDidMount = () => {
 
-  };
+
+export class App extends Component {
+  componentDidMount = () => {};
   render() {
-    return <RootStack />;
+    return (
+      <Provider store={store}>
+        <AppWithNavigationState />
+      </Provider>
+    );
   }
 }
+
+Expo.registerRootComponent(App);
+
+export default App;
