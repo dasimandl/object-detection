@@ -7,10 +7,10 @@ import {
   Button
 } from 'react-native';
 import { Camera, Permissions } from 'expo';
-// import {MobileNet} from './models/mobilenet';
-// import * as tfc from '@tensorflow/tfjs-core';
+import Camera from './camera'
 
 export default class PredictScreen extends React.Component {
+
   render() {
     return (
       <View>

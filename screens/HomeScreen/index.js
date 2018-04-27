@@ -108,7 +108,7 @@ export default class HomeScreen extends React.Component {
             <View
               style={{
                 flex: 1,
-                backgroundColor: 'trannpmsparent',
+                backgroundColor: 'transparent',
                 flexDirection: 'row',
               }}
             >
