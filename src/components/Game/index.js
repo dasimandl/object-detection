@@ -1,18 +1,26 @@
 import React from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
+import { Text, View, StyleSheet, FlatList, StatusBar } from 'react-native';
 
-import { Button, ListItem, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import Game from './game';
 const game = new Game();
 import { updatePermission, updateType, setPredictions } from '../../store';
-import { Camera, Permissions, ImageManipulator } from 'expo';
+import { Camera, Permissions } from 'expo';
+import {
+  Header,
+  Body,
+  Footer,
+  List,
+  Container,
+  Title,
+  Icon,
+  Left,
+  Right,
+  Button,
+  FooterTab,
+  Content,
+} from 'native-base';
+import { FlipCamera } from './FlipCamera';
 
 const styles = StyleSheet.create({
   container: {
@@ -84,7 +92,20 @@ export class Play extends React.Component {
       return <Text>No access to camera</Text>;
     } else {
       return (
-        <View style={{ flex: 1 }}>
+        <Container>
+          <Header>
+            <Left>
+              <Button transparent>
+                <Icon name="menu" />
+              </Button>
+            </Left>
+            <Body>
+              <Title>Scavenger hunt</Title>
+            </Body>
+            <Right>
+              <FlipCamera />
+            </Right>
+          </Header>
           <Camera
             ref={ref => {
               this.camera = ref;
@@ -102,35 +123,15 @@ export class Play extends React.Component {
               )}
             />
             {/* </View> */}
-            <View style={styles.container}>
-              <Button
-                icon={<Icon name="arrow-right" size={15} color="white" />}
-                title="BUTTON WITH ICON"
-              />
-
-              <Button
-                icon={<Icon name="arrow-right" size={15} color="white" />}
-                iconRight
-                title="BUTTON WITH RIGHT ICON"
-              />
-              {/* <TouchableOpacity
-                style={styles.button}
-                onPress={() => this.checkPhoto()}
-              >
-                <Text style={styles.buttonText}>Found Item</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  updateCameraType(cameraType === 1 ? 2 : 1);
-                }}
-              >
-                <Text style={styles.buttonText}> Flip </Text>
-              </TouchableOpacity> */}
-            </View>
           </Camera>
-        </View>
+          <Footer>
+            <FooterTab>
+              <Button full onPress={() => this.checkPhoto()}>
+                <Text>Found Item</Text>
+              </Button>
+            </FooterTab>
+          </Footer>
+        </Container>
       );
     }
   }
