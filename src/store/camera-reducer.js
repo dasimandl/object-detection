@@ -5,6 +5,7 @@ const SET_CAMERA_TYPE = 'SET_CAMERA_TYPE';
 const defaultCameraData = {
   hasCameraPermission: null,
   cameraType: 1,
+  camera: null,
 };
 // ACTION CREATORS
 const init = permission => ({ type: CAMERA_PERMISSION_GRANTED, permission });
@@ -14,6 +15,7 @@ export const updatePermission = permission => dispatch =>
   dispatch(init(permission));
 export const updateType = cameraType => dispatch =>
   dispatch(setCameraType(cameraType));
+
 // REDUCER
 export default function(state = defaultCameraData, action) {
   switch (action.type) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StackNavigator } from 'react-navigation';
 import HomeScreen from '../components/HomeScreen';
-import PredictScreen from '../components/PredictScreen';
+import Play from '../components/Game';
 import { connect } from 'react-redux';
 import { addListener } from '../utils/redux';
 
@@ -10,8 +10,8 @@ export const AppNavigator = StackNavigator(
     Home: {
       screen: HomeScreen,
     },
-    Prediction: {
-      screen: PredictScreen,
+    Play: {
+      screen: Play,
     },
   },
   {
