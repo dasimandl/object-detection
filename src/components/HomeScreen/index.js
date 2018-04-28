@@ -9,7 +9,7 @@ import {
   FlatList,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { updatePermission } from '../../store';
+import { updatePermission, updateType } from '../../store';
 import { Camera, Permissions, ImageManipulator } from 'expo';
 const Clarifai = require('clarifai');
 let clarifai;
@@ -36,8 +36,8 @@ export class HomeScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-      hasCameraPermission: null,
-      type: Camera.Constants.Type.back,
+      // hasCameraPermission: null,
+      // type: Camera.Constants.Type.back,
       uri: '',
       predictions: [],
     };
@@ -47,7 +47,7 @@ export class HomeScreen extends React.Component {
     console.log('inside CDM Lifecycle');
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     const { updateCameraPermission } = this.props;
-     updateCameraPermission(status === 'granted');
+    updateCameraPermission(status === 'granted');
     // this.setState({ hasCameraPermission: status === 'granted' });
     clarifai = new Clarifai.App({
       apiKey: 'd33b727722384c04adfa7bdf5589e5cf',
@@ -77,9 +77,10 @@ export class HomeScreen extends React.Component {
   };
 
   render() {
-    const { uri } = this.state;
-    console.log('PROPS IN HOME SCREEN', this.props)
-    const { hasCameraPermission } = this.props;
+    const { uri, type } = this.state;
+    console.log('PROPS IN HOME SCREEN', this.props);
+    const { hasCameraPermission, updateCameraType, cameraType } = this.props;
+    console.log('type', cameraType);
     if (hasCameraPermission === null) {
       return <View />;
     } else if (hasCameraPermission === false) {
@@ -92,7 +93,7 @@ export class HomeScreen extends React.Component {
               this.camera = ref;
             }}
             style={{ flex: 1 }}
-            type={this.state.type}
+            type={cameraType}
           >
             <Text>Home Screen</Text>
             <Button
@@ -133,12 +134,7 @@ export class HomeScreen extends React.Component {
                   alignItems: 'center',
                 }}
                 onPress={() => {
-                  this.setState({
-                    type:
-                      this.state.type === Camera.Constants.Type.back
-                        ? Camera.Constants.Type.front
-                        : Camera.Constants.Type.back,
-                  });
+                  updateCameraType(cameraType === 1 ? 1 : 2);
                 }}
               >
                 <Text
@@ -156,10 +152,16 @@ export class HomeScreen extends React.Component {
   }
 }
 
-const mapState = ({ hasCameraPermission }) => ({ hasCameraPermission });
+const mapState = ({ hasCameraPermission, cameraType }) => ({
+  hasCameraPermission,
+  cameraType,
+});
 const mapDispatch = dispatch => ({
   updateCameraPermission(permission) {
     return dispatch(updatePermission(permission));
+  },
+  updateCameraType(type) {
+    return dispatch(updateType(type));
   },
 });
 export default connect(mapState, mapDispatch)(HomeScreen);

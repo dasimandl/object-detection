@@ -19,12 +19,10 @@ export const AppNavigator = StackNavigator(
   }
 );
 
-export class AppWithNavigationState extends Component {
-  render() {
-    const { dispatch, nav } = this.props;
-    return <AppNavigator navigation={{ dispatch, state: nav, addListener }} />;
-  }
-}
+export const AppWithNavigationState = props => {
+  const { dispatch, nav } = props;
+  return <AppNavigator navigation={{ dispatch, state: nav, addListener }} />;
+};
 
 const mapState = ({ nav }) => ({ nav });
 
