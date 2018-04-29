@@ -5,3 +5,4 @@ const scavengerClasses = {
   sofa: 'sofa',
   plate: 'plate'
 }
+export default scavengerClasses;

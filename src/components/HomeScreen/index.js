@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
+
 import {
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
+  StatusBar
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -33,25 +35,32 @@ const styles = StyleSheet.create({
   },
 });
 
-export const HomeScreen = props => {
-  return (
-    <ImageBackground
-      source={require('../../assets/background.jpg')}
-      style={styles.backgroundImage}
-    >
-      <View style={styles.container}>
-        <Text style={styles.titleText}>Scavenger Hunt</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => props.navigation.navigate('Play')}
-        >
-          <Text>Start</Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
-  );
-};
-
+export class HomeScreen extends Component {
+  componentWillMount() {
+    StatusBar.setHidden(false);
+  }
+  static navigationOptions = {
+    header: null,
+  };
+  render() {
+    return (
+      <ImageBackground
+        source={require('../../assets/background.jpg')}
+        style={styles.backgroundImage}
+      >
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Scavenger Hunt</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('Play')}
+          >
+            <Text>Start</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    );
+  }
+}
 const mapState = ({
   cameraData: { hasCameraPermission, cameraType },
   predictions,

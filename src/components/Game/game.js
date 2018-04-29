@@ -1,5 +1,6 @@
-import { Camera, Permissions, ImageManipulator } from 'expo';
+import { ImageManipulator } from 'expo';
 import { setPredictions } from '../../store';
+import scavengerClasses from './scavenger-classes';
 const Clarifai = require('clarifai');
 let clarifai = new Clarifai.App({
   apiKey: 'd33b727722384c04adfa7bdf5589e5cf',
@@ -29,5 +30,11 @@ export default class Game {
       .then(data => data.outputs[0].data.concepts)
       .catch(err => console.log('this is error', err));
     return predictions;
+  };
+  getTargetItem = () => {
+    const keys = Object.keys(scavengerClasses);
+    const numberOfItems = keys.length;
+    const randomIndex = Math.floor(Math.random() * numberOfItems);
+    return scavengerClasses[keys[randomIndex]];
   };
 }

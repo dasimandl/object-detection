@@ -1,87 +1,50 @@
 import React from 'react';
-import { Text, View, StyleSheet, FlatList, StatusBar } from 'react-native';
-
+import { Text, View, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import Game from './game';
-const game = new Game();
-import { updatePermission, updateType, setPredictions } from '../../store';
-import { Camera, Permissions } from 'expo';
+import SuccessfulMatch from './successful-match';
 import {
-  Header,
-  Body,
-  Footer,
-  List,
-  Container,
-  Title,
-  Icon,
-  Left,
-  Right,
-  Button,
-  FooterTab,
-  Content,
-} from 'native-base';
-import { FlipCamera } from './FlipCamera';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 10,
-    flexDirection: 'row',
-  },
-  listContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 10,
-    flexWrap: 'wrap',
-    // flexDirection: 'row',
-  },
-  titleText: {
-    fontSize: 50,
-  },
-  buttonText: {
-    fontSize: 30,
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-    color: 'white',
-  },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    width: '50%',
-    justifyContent: 'center',
-    alignSelf: 'flex-end',
-    height: '10%',
-  },
-});
+  updatePermission,
+  updateType,
+  setPredictions,
+  setTargetItem,
+  setLoadStatus,
+  setCurrentMatch,
+} from '../../store';
+import { Camera, Permissions } from 'expo';
+import { Footer, Container, Button, FooterTab } from 'native-base';
+const game = new Game();
 
 export class Play extends React.Component {
+  componentWillMount() {
+    StatusBar.setHidden(true);
+  }
   async componentDidMount() {
     console.log('inside CDM Lifecycle');
+    const {
+      updateCameraPermission,
+      updateTargetItem,
+      updateLoadStatus,
+    } = this.props;
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    const { updateCameraPermission } = this.props;
-    updateCameraPermission(status === 'granted');
+    await updateCameraPermission(status === 'granted');
+    await updateTargetItem(game.getTargetItem());
+    await updateLoadStatus(true);
   }
 
   checkPhoto = async () => {
+    const { updatePredictions, targetItem, updateCurrentMatch } = this.props;
     const predictions = await game.predict(await game.snap(this.camera));
-    this.props.updatePredictions(predictions);
+    await updatePredictions(predictions);
+    if (predictions.filter(prediction => prediction.name === targetItem).length) {
+      updateCurrentMatch(true)
+    }
   };
 
   render() {
-    const {
-      hasCameraPermission,
-      updateCameraType,
-      cameraType,
-      predictions,
-    } = this.props;
-    if (hasCameraPermission === null) {
+    const { hasCameraPermission, cameraType, isLoaded, match } = this.props;
+    console.log('camrera', this.camera);
+    if (!isLoaded || hasCameraPermission === null) {
       return (
         <View>
           {' '}
@@ -93,44 +56,26 @@ export class Play extends React.Component {
     } else {
       return (
         <Container>
-          <Header>
-            <Left>
-              <Button transparent>
-                <Icon name="menu" />
-              </Button>
-            </Left>
-            <Body>
-              <Title>Scavenger hunt</Title>
-            </Body>
-            <Right>
-              <FlipCamera />
-            </Right>
-          </Header>
-          <Camera
-            ref={ref => {
-              this.camera = ref;
-            }}
-            style={{ flex: 1 }}
-            type={cameraType}
-          >
-            {/* <View style={styles.listContainer}> */}
-            <FlatList
-              data={predictions.map((prediction, i) => ({
-                key: `${prediction.name} ${prediction.value.toString()}`,
-              }))}
-              renderItem={({ item }) => (
-                <Text style={styles.item}>{item.key}</Text>
-              )}
-            />
-            {/* </View> */}
-          </Camera>
-          <Footer>
-            <FooterTab>
-              <Button full onPress={() => this.checkPhoto()}>
-                <Text>Found Item</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
+          {match ? (
+            <SuccessfulMatch />
+          ) : (
+            <Container>
+              <Camera
+                ref={ref => {
+                  this.camera = ref;
+                }}
+                style={{ flex: 1 }}
+                type={cameraType}
+              />
+              <Footer>
+                <FooterTab>
+                  <Button full onPress={() => this.checkPhoto()}>
+                    <Text>Found Item</Text>
+                  </Button>
+                </FooterTab>
+              </Footer>
+            </Container>
+          )}
         </Container>
       );
     }
@@ -139,11 +84,13 @@ export class Play extends React.Component {
 
 const mapState = ({
   cameraData: { hasCameraPermission, cameraType },
-  predictions,
+  game: { isLoaded },
+  predictions, targetItem
 }) => ({
   hasCameraPermission,
   cameraType,
   predictions,
+  isLoaded,
 });
 const mapDispatch = dispatch => ({
   updateCameraPermission(permission) {
@@ -154,6 +101,15 @@ const mapDispatch = dispatch => ({
   },
   updatePredictions(predictions) {
     return dispatch(setPredictions(predictions));
+  },
+  updateTargetItem(item) {
+    return dispatch(setTargetItem(item));
+  },
+  updateCurrentMatch(item) {
+    return dispatch(setCurrentMatch(item));
+  },
+  updateLoadStatus(isLoaded) {
+    return dispatch(setLoadStatus(isLoaded));
   },
 });
 export default connect(mapState, mapDispatch)(Play);
