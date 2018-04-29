@@ -7,7 +7,6 @@ import {
   Button
 } from 'react-native';
 import { Camera, Permissions } from 'expo';
-import Camera from './camera'
 
 export default class PredictScreen extends React.Component {
 
