@@ -18,6 +18,12 @@ import { Footer, Container, Button, FooterTab } from 'native-base';
 const game = new Game();
 
 export class Play extends React.Component {
+  constructor(props) {
+    super(props);
+    if (this.camera) {
+      this.camera = this.camera.bind(this);
+    }
+  }
   componentWillMount() {
     StatusBar.setHidden(true);
   }
@@ -33,7 +39,7 @@ export class Play extends React.Component {
     await updateCameraPermission(status === 'granted');
     await updateTargetItem(game.getTargetItem());
     await updateLoadStatus(true);
-    await updateStopInterval(await game.start());
+    await updateStopInterval(await game.start(this.camera));
   }
 
   checkPhoto = async () => {
@@ -70,7 +76,7 @@ export class Play extends React.Component {
       return (
         <Container>
           {match ? (
-            <SuccessfulMatch game={game} />
+            <SuccessfulMatch camera={this.camera} game={game} />
           ) : (
             <Container>
               {targetItem ? <CurrentTarget /> : null}

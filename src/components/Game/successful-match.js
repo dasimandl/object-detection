@@ -22,10 +22,11 @@ export class SuccessfulMatch extends Component {
       game,
       updateTargetItem,
       updateStopIntervalRef,
+      camera,
     } = this.props;
     await updateMatch(false);
     await updateTargetItem(game.getTargetItem());
-    await updateStopIntervalRef(game.start());
+    await updateStopIntervalRef(game.start(camera));
   };
   render() {
     const { targetItem, match, isRunning } = this.props;

@@ -8,14 +8,23 @@ let clarifai = new Clarifai.App({
 process.nextTick = setImmediate;
 
 export default class Game {
+  constructor() {
+    this.start = this.start.bind(this);
+    this.snap = this.snap.bind(this);
+    this.stop = this.stop.bind(this);
+    this.predict = this.predict.bind(this);
+    this.getTargetItem = this.getTargetItem.bind(this);
+  }
   init = async () => {
     await console.log('inside Game Init');
   };
 
   snap = async camera => {
-    console.log('inside game snap');
+    console.log('inside game snap', camera);
     if (camera) {
+      console.log('camera is available');
       let photo = await camera.takePictureAsync();
+      console.log('photo is', photo);
       let manipulatedImage = await ImageManipulator.manipulate(
         photo.uri,
         [{ resize: { height: 512, width: 512 } }],
@@ -40,10 +49,10 @@ export default class Game {
   };
 
   start = async camera => {
-    console.log('inside start');
-    const interval = setInterval(
-      await this.predict(await this.snap(camera), 3000)
-    );
+    console.log('inside start', camera);
+    const interval = setInterval(async () => {
+      await this.predict(await this.snap(camera));
+    }, 3000);
     return interval;
   };
 
