@@ -11,6 +11,7 @@ import {
   setTargetItem,
   setLoadStatus,
   setCurrentMatch,
+  setStopInterval,
 } from '../../store';
 import { Camera, Permissions } from 'expo';
 import { Footer, Container, Button, FooterTab } from 'native-base';
@@ -26,11 +27,13 @@ export class Play extends React.Component {
       updateCameraPermission,
       updateTargetItem,
       updateLoadStatus,
+      updateStopInterval,
     } = this.props;
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     await updateCameraPermission(status === 'granted');
     await updateTargetItem(game.getTargetItem());
     await updateLoadStatus(true);
+    await updateStopInterval(await game.start());
   }
 
   checkPhoto = async () => {
@@ -49,12 +52,12 @@ export class Play extends React.Component {
     const {
       hasCameraPermission,
       cameraType,
-      isLoaded,
+      isRunning,
       match,
       targetItem,
     } = this.props;
     console.log('camrera', this.camera);
-    if (!isLoaded || hasCameraPermission === null) {
+    if (!isRunning || hasCameraPermission === null) {
       return (
         <View>
           {' '}
@@ -95,11 +98,11 @@ export class Play extends React.Component {
 
 const mapState = ({
   cameraData: { hasCameraPermission, cameraType },
-  game: { isLoaded, targetItem, match },
+  game: { isRunning, targetItem, match },
 }) => ({
   hasCameraPermission,
   cameraType,
-  isLoaded,
+  isRunning,
   targetItem,
   match,
 });
@@ -119,8 +122,11 @@ const mapDispatch = dispatch => ({
   updateCurrentMatch(item) {
     return dispatch(setCurrentMatch(item));
   },
-  updateLoadStatus(isLoaded) {
-    return dispatch(setLoadStatus(isLoaded));
+  updateLoadStatus(isRunning) {
+    return dispatch(setLoadStatus(isRunning));
+  },
+  updateStopInterval(interval) {
+    return dispatch(setStopInterval(interval));
   },
 });
 export default connect(mapState, mapDispatch)(Play);

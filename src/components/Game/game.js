@@ -25,6 +25,7 @@ export default class Game {
     }
   };
   predict = async image => {
+    console.log('inside predict');
     const predictions = await clarifai.models
       .predict(Clarifai.GENERAL_MODEL, image)
       .then(data => data.outputs[0].data.concepts)
@@ -38,4 +39,15 @@ export default class Game {
     return scavengerClasses[keys[randomIndex]];
   };
 
+  start = async camera => {
+    console.log('inside start');
+    const interval = setInterval(
+      await this.predict(await this.snap(camera), 3000)
+    );
+    return interval;
+  };
+
+  stop = intervalId => {
+    clearInterval(intervalId);
+  };
 }

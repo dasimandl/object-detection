@@ -20,7 +20,7 @@ export const AppNavigator = StackNavigator(
     initialRouteName: 'Home',
     navigationOptions: {
       headerStyle: {
-        backgroundColor: '#f4511e',
+        backgroundColor: '#A51E45',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
