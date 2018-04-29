@@ -3,6 +3,7 @@ import { Text, View, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import Game from './game';
 import SuccessfulMatch from './successful-match';
+import CurrentTarget from './current-target';
 import {
   updatePermission,
   updateType,
@@ -36,13 +37,22 @@ export class Play extends React.Component {
     const { updatePredictions, targetItem, updateCurrentMatch } = this.props;
     const predictions = await game.predict(await game.snap(this.camera));
     await updatePredictions(predictions);
-    if (predictions.filter(prediction => prediction.name === targetItem).length) {
-      updateCurrentMatch(true)
+    console.log('new predictions', predictions, 'target', targetItem);
+    if (
+      predictions.filter(prediction => prediction.name === targetItem).length
+    ) {
+      updateCurrentMatch(true);
     }
   };
 
   render() {
-    const { hasCameraPermission, cameraType, isLoaded, match } = this.props;
+    const {
+      hasCameraPermission,
+      cameraType,
+      isLoaded,
+      match,
+      targetItem,
+    } = this.props;
     console.log('camrera', this.camera);
     if (!isLoaded || hasCameraPermission === null) {
       return (
@@ -57,9 +67,10 @@ export class Play extends React.Component {
       return (
         <Container>
           {match ? (
-            <SuccessfulMatch />
+            <SuccessfulMatch game={game} />
           ) : (
             <Container>
+              {targetItem ? <CurrentTarget /> : null}
               <Camera
                 ref={ref => {
                   this.camera = ref;
@@ -84,13 +95,13 @@ export class Play extends React.Component {
 
 const mapState = ({
   cameraData: { hasCameraPermission, cameraType },
-  game: { isLoaded },
-  predictions, targetItem
+  game: { isLoaded, targetItem, match },
 }) => ({
   hasCameraPermission,
   cameraType,
-  predictions,
   isLoaded,
+  targetItem,
+  match,
 });
 const mapDispatch = dispatch => ({
   updateCameraPermission(permission) {

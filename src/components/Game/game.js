@@ -37,4 +37,5 @@ export default class Game {
     const randomIndex = Math.floor(Math.random() * numberOfItems);
     return scavengerClasses[keys[randomIndex]];
   };
+
 }

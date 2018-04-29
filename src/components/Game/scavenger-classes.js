@@ -1,8 +1,7 @@
 const scavengerClasses = {
-  pillow: 'pillow',
-  blanket: 'blanket',
   dog: 'dog',
   sofa: 'sofa',
-  plate: 'plate'
+  glass: 'glass',
+  beard: 'beard',
 }
 export default scavengerClasses;
