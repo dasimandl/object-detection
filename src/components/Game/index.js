@@ -22,6 +22,7 @@ export class Play extends React.Component {
     super(props);
     if (this.camera) {
       this.camera = this.camera.bind(this);
+      this.start = this.start.bind(this);
     }
   }
   componentWillMount() {
@@ -39,9 +40,25 @@ export class Play extends React.Component {
     await updateCameraPermission(status === 'granted');
     await updateTargetItem(game.getTargetItem());
     await updateLoadStatus(true);
-    await updateStopInterval(await game.start(this.camera));
+    await updateStopInterval(await this.start(this.camera));
   }
 
+  start = async camera => {
+    console.log('inside start', camera);
+    const { updatePredictions, updateCurrentMatch, targetItem } = this.props;
+    const interval = setInterval(async () => {
+      const photo = await game.snap(camera);
+      const predictions = await game.predict(photo);
+      // await updatePredictions(predictions);
+      console.log('new predictions', predictions, 'target', targetItem);
+      if (
+        predictions.filter(prediction => prediction.name === targetItem).length
+      ) {
+        updateCurrentMatch(true);
+      }
+    }, 3000);
+    return interval;
+  };
   checkPhoto = async () => {
     const { updatePredictions, targetItem, updateCurrentMatch } = this.props;
     const predictions = await game.predict(await game.snap(this.camera));
@@ -62,7 +79,7 @@ export class Play extends React.Component {
       match,
       targetItem,
     } = this.props;
-    console.log('camrera', this.camera);
+    console.log('Play Camera', this.camera);
     if (!isRunning || hasCameraPermission === null) {
       return (
         <View>
@@ -76,7 +93,11 @@ export class Play extends React.Component {
       return (
         <Container>
           {match ? (
-            <SuccessfulMatch camera={this.camera} game={game} />
+            <SuccessfulMatch
+              camera={this.camera}
+              game={game}
+              start={this.start}
+            />
           ) : (
             <Container>
               {targetItem ? <CurrentTarget /> : null}

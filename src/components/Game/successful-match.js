@@ -6,7 +6,7 @@ import {
   setTargetItem,
   setStopInterval,
 } from '../../store';
-import { Footer, Container, Button, FooterTab } from 'native-base';
+import { Container, Button } from 'native-base';
 import { Text } from 'react-native';
 
 export class SuccessfulMatch extends Component {
@@ -23,10 +23,11 @@ export class SuccessfulMatch extends Component {
       updateTargetItem,
       updateStopIntervalRef,
       camera,
+      start,
     } = this.props;
-    await updateMatch(false);
     await updateTargetItem(game.getTargetItem());
-    await updateStopIntervalRef(game.start(camera));
+    await updateStopIntervalRef(await start(camera));
+    await updateMatch(false);
   };
   render() {
     const { targetItem, match, isRunning } = this.props;
