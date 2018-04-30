@@ -54,7 +54,7 @@ export class HomeScreen extends Component {
             style={styles.button}
             onPress={() => this.props.navigation.navigate('Play')}
           >
-            <Text>Start</Text>
+            <Text style={{fontSize: 20}}>Start</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>

@@ -10,7 +10,7 @@ export const FlipCamera = props => {
       transparent
       onPress={() => updateCameraType(cameraType === 1 ? 2 : 1)}
     >
-      <Icon name="ios-reverse-camera" />
+      <Icon style={{color: '#fff'}} name="ios-reverse-camera" />
     </Button>
   );
 };

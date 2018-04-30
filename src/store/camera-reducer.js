@@ -12,7 +12,7 @@ const defaultCameraData = {
 // ACTION CREATORS
 const init = permission => ({ type: CAMERA_PERMISSION_GRANTED, permission });
 const setCameraType = cameraType => ({ type: SET_CAMERA_TYPE, cameraType });
-const setUri = uri => ({ type: SET_CAMERA_TYPE, uri });
+const setUri = uri => ({ type: SET_CURRENT_URI, uri });
 // THUNK CREATORS
 export const updatePermission = permission => dispatch =>
   dispatch(init(permission));

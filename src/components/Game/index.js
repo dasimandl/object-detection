@@ -12,6 +12,7 @@ import {
   setLoadStatus,
   setCurrentMatch,
   setStopInterval,
+  updateUri,
 } from '../../store';
 import { Camera, Permissions } from 'expo';
 import { Footer, Container, Button, FooterTab } from 'native-base';
@@ -36,18 +37,28 @@ export class Play extends React.Component {
   }
 
   start = () => {
-    console.log('inside start', this.camera);
-    const { updateCurrentMatch, targetItem } = this.props;
+    const {
+      updateCurrentMatch,
+      targetItem,
+      updatePredictions,
+      updateCurrentUri,
+    } = this.props;
     const intervalId = setInterval(async () => {
       const photo = await game.snap(this.camera);
-      const predictions = await game.predict(photo);
+      const resizedImage = await game.resize(photo);
+      const predictions = await game.predict(resizedImage);
       if (
         predictions &&
-        predictions.filter(prediction => prediction.name === targetItem).length
+        predictions.some(
+          prediction => prediction.name === targetItem && prediction.value > 0.8
+        )
       ) {
-        updateCurrentMatch(true);
+        await updateCurrentUri(photo);
+        // console.log('MATCHED', predictions, targetItem);
+        await updatePredictions(predictions);
+        await updateCurrentMatch(true);
       }
-    }, 1500);
+    }, 2500);
     return intervalId;
   };
 
@@ -90,13 +101,6 @@ export class Play extends React.Component {
                   updateStopInterval(await this.start(this.camera))
                 }
               />
-              <Footer>
-                <FooterTab>
-                  <Button full onPress={() => this.checkPhoto()}>
-                    <Text>Found Item</Text>
-                  </Button>
-                </FooterTab>
-              </Footer>
             </Container>
           )}
         </Container>
@@ -136,6 +140,9 @@ const mapDispatch = dispatch => ({
   },
   updateStopInterval(interval) {
     return dispatch(setStopInterval(interval));
+  },
+  updateCurrentUri(photo) {
+    return dispatch(updateUri(photo));
   },
 });
 export default connect(mapState, mapDispatch)(Play);

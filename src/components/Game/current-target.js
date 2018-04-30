@@ -1,8 +1,8 @@
 import React from 'react';
-import { Header } from 'native-base';
+import { Header, Left, Right, Title } from 'native-base';
 import { Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { updatePermission, updateType, setPredictions } from '../../store';
+import { updateType } from '../../store';
 
 const styles = StyleSheet.create({
   titleText: {
@@ -15,16 +15,23 @@ const styles = StyleSheet.create({
 });
 
 export const CurrentTarget = props => {
-  const { targetItem } = props;
+  const { targetItem, score } = props;
+  console.log('score', score);
   return (
     <Header rounded style={styles.header}>
-      <Text style={styles.titleText}>{`Find a ${targetItem}`}</Text>
+      <Left>
+        <Title style={styles.titleText}>{`Find a ${targetItem}`}</Title>
+      </Left>
+      <Right>
+        <Text style={styles.titleText}>{`Score: ${score}`}</Text>
+      </Right>
     </Header>
   );
 };
 
-const mapState = ({ game: { targetItem } }) => ({
+const mapState = ({ game: { targetItem, score } }) => ({
   targetItem,
+  score,
 });
 const mapDispatch = dispatch => ({
   updateCameraType(type) {

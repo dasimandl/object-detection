@@ -21,13 +21,16 @@ export default class Game {
     console.log('inside game snap', camera);
     if (camera) {
       let photo = await camera.takePictureAsync();
-      let manipulatedImage = await ImageManipulator.manipulate(
-        photo.uri,
-        [{ resize: { height: 512, width: 512 } }],
-        { base64: true }
-      );
-      return manipulatedImage.base64;
+      return photo.uri;
     }
+  };
+  resize = async photo => {
+    let manipulatedImage = await ImageManipulator.manipulate(
+      photo,
+      [{ resize: { height: 300, width: 300 } }],
+      { base64: true }
+    );
+    return manipulatedImage.base64;
   };
   predict = async image => {
     console.log('inside predict');
@@ -43,8 +46,6 @@ export default class Game {
     const randomIndex = Math.floor(Math.random() * numberOfItems);
     return scavengerClasses[keys[randomIndex]];
   };
-
-
 
   stop = intervalId => {
     clearInterval(intervalId);
