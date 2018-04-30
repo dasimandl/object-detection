@@ -1,5 +1,4 @@
 import { ImageManipulator } from 'expo';
-import { setPredictions } from '../../store';
 import scavengerClasses from './scavenger-classes';
 const Clarifai = require('clarifai');
 let clarifai = new Clarifai.App({
@@ -9,7 +8,6 @@ process.nextTick = setImmediate;
 
 export default class Game {
   constructor() {
-    this.start = this.start.bind(this);
     this.snap = this.snap.bind(this);
     this.stop = this.stop.bind(this);
     this.predict = this.predict.bind(this);
@@ -22,9 +20,7 @@ export default class Game {
   snap = async camera => {
     console.log('inside game snap', camera);
     if (camera) {
-      console.log('camera is available');
       let photo = await camera.takePictureAsync();
-      console.log('photo is', photo);
       let manipulatedImage = await ImageManipulator.manipulate(
         photo.uri,
         [{ resize: { height: 512, width: 512 } }],
@@ -48,13 +44,7 @@ export default class Game {
     return scavengerClasses[keys[randomIndex]];
   };
 
-  start = async camera => {
-    console.log('inside start', camera);
-    const interval = setInterval(async () => {
-      await this.predict(await this.snap(camera));
-    }, 3000);
-    return interval;
-  };
+
 
   stop = intervalId => {
     clearInterval(intervalId);
