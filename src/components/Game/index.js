@@ -37,7 +37,7 @@ export class Play extends React.Component {
 
   start = () => {
     console.log('inside start', this.camera);
-    const { updateCurrentMatch, targetItem } = this.props;
+    const { updateCurrentMatch, targetItem, updatePredictions } = this.props;
     const intervalId = setInterval(async () => {
       const photo = await game.snap(this.camera);
       const predictions = await game.predict(photo);
@@ -45,7 +45,8 @@ export class Play extends React.Component {
         predictions &&
         predictions.filter(prediction => prediction.name === targetItem).length
       ) {
-        updateCurrentMatch(true);
+        await updatePredictions(predictions);
+        await updateCurrentMatch(true);
       }
     }, 1500);
     return intervalId;
