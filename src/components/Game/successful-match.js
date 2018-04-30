@@ -26,7 +26,7 @@ export class SuccessfulMatch extends Component {
       start,
     } = this.props;
     await updateTargetItem(game.getTargetItem());
-    await updateStopIntervalRef(await start(camera));
+    // await updateStopIntervalRef(await start(camera));
     await updateMatch(false);
   };
   render() {

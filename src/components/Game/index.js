@@ -29,58 +29,37 @@ export class Play extends React.Component {
     StatusBar.setHidden(true);
   }
   async componentDidMount() {
-    console.log('inside CDM Lifecycle');
-    const {
-      updateCameraPermission,
-      updateTargetItem,
-      updateLoadStatus,
-      updateStopInterval,
-    } = this.props;
+    const { updateCameraPermission, updateTargetItem } = this.props;
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     await updateCameraPermission(status === 'granted');
     await updateTargetItem(game.getTargetItem());
-    await updateLoadStatus(true);
-    await updateStopInterval(await this.start(this.camera));
   }
 
-  start = async camera => {
-    console.log('inside start', camera);
-    const { updatePredictions, updateCurrentMatch, targetItem } = this.props;
-    const interval = setInterval(async () => {
-      const photo = await game.snap(camera);
+  start = () => {
+    console.log('inside start', this.camera);
+    const { updateCurrentMatch, targetItem } = this.props;
+    const intervalId = setInterval(async () => {
+      const photo = await game.snap(this.camera);
       const predictions = await game.predict(photo);
-      // await updatePredictions(predictions);
-      console.log('new predictions', predictions, 'target', targetItem);
       if (
+        predictions &&
         predictions.filter(prediction => prediction.name === targetItem).length
       ) {
         updateCurrentMatch(true);
       }
-    }, 3000);
-    return interval;
-  };
-  checkPhoto = async () => {
-    const { updatePredictions, targetItem, updateCurrentMatch } = this.props;
-    const predictions = await game.predict(await game.snap(this.camera));
-    await updatePredictions(predictions);
-    console.log('new predictions', predictions, 'target', targetItem);
-    if (
-      predictions.filter(prediction => prediction.name === targetItem).length
-    ) {
-      updateCurrentMatch(true);
-    }
+    }, 1500);
+    return intervalId;
   };
 
   render() {
     const {
       hasCameraPermission,
       cameraType,
-      isRunning,
       match,
       targetItem,
+      updateStopInterval,
     } = this.props;
-    console.log('Play Camera', this.camera);
-    if (!isRunning || hasCameraPermission === null) {
+    if (hasCameraPermission === null) {
       return (
         <View>
           {' '}
@@ -107,6 +86,9 @@ export class Play extends React.Component {
                 }}
                 style={{ flex: 1 }}
                 type={cameraType}
+                onCameraReady={async () =>
+                  updateStopInterval(await this.start(this.camera))
+                }
               />
               <Footer>
                 <FooterTab>
