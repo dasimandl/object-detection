@@ -12,13 +12,14 @@ export default class Game {
     this.stop = this.stop.bind(this);
     this.predict = this.predict.bind(this);
     this.getTargetItem = this.getTargetItem.bind(this);
+    this.index = 0;
   }
   init = async () => {
     await console.log('inside Game Init');
   };
 
   snap = async camera => {
-    console.log('inside game snap', camera);
+    // console.log('inside game snap', camera);
     if (camera) {
       let photo = await camera.takePictureAsync();
       return photo.uri;
@@ -33,7 +34,7 @@ export default class Game {
     return manipulatedImage.base64;
   };
   predict = async image => {
-    console.log('inside predict');
+    // console.log('inside predict');
     const predictions = await clarifai.models
       .predict(Clarifai.GENERAL_MODEL, image)
       .then(data => data.outputs[0].data.concepts)
@@ -43,8 +44,9 @@ export default class Game {
   getTargetItem = () => {
     const keys = Object.keys(scavengerClasses);
     const numberOfItems = keys.length;
-    const randomIndex = Math.floor(Math.random() * numberOfItems);
-    return scavengerClasses[keys[randomIndex]];
+    // const randomIndex = Math.floor(Math.random() * numberOfItems);
+    return scavengerClasses[keys[this.index++]];
+    // return scavengerClasses[keys[randomIndex]];
   };
 
   stop = intervalId => {

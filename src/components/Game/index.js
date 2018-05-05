@@ -47,6 +47,7 @@ export class Play extends React.Component {
       const photo = await game.snap(this.camera);
       const resizedImage = await game.resize(photo);
       const predictions = await game.predict(resizedImage);
+      // console.log('predictions', predictions);
       if (
         predictions &&
         predictions.some(

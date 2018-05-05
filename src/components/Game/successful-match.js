@@ -23,10 +23,10 @@ import { Text, Image, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   titleText: {
-    fontSize: 30,
+    fontSize: 20,
   },
   header: {
-    padding: 10,
+    padding: 5,
     backgroundColor: '#A51E45',
   },
 });
